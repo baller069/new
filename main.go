@@ -48,7 +48,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	// Check if the message is "!hi"
-	if m.Content == "test" {
+	if m.Content == "!test" {
 		// Send a reply message
 		s.ChannelMessageSend(m.ChannelID, "nigger")
 	}
