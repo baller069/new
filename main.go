@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
-  "os"
+	"log"
+	"net/http"
+	"os"
 	"github.com/bwmarrin/discordgo"
 )
 
 func main() {
+	// Retrieve the Discord token from environment variables
 	secret_token := os.Getenv("DISCORD_TOKEN")
 	Token := secret_token // Replace with your bot's token
 
@@ -27,7 +30,12 @@ func main() {
 		return
 	}
 
+	// Print that the bot is running
 	fmt.Println("Bot is now running. Press Ctrl+C to exit.")
+
+	// Start the HTTP server in a goroutine
+	go startHTTPServer()
+
 	// Block until a signal is received
 	select {}
 }
@@ -43,5 +51,23 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Content == "hi" {
 		// Send a reply message
 		s.ChannelMessageSend(m.ChannelID, "Hello!")
+	}
+}
+
+// Start the HTTP server on a specified port
+func startHTTPServer() {
+	// Define the port to listen on (can be set dynamically using command-line args or environment variables)
+	port := ":8080" // You can change this to any available port number
+
+	// Handle the root route
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello, World! The bot is running!")
+	})
+
+	// Start the HTTP server and listen on the specified port
+	log.Printf("Starting HTTP server on port %s...\n", port)
+	err := http.ListenAndServe(port, nil)
+	if err != nil {
+		log.Fatalf("Error starting HTTP server: %v", err)
 	}
 }
